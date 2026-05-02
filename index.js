@@ -39,11 +39,14 @@ if (NODE_ENV === 'development') {
   app.use(morgan('tiny'));
 }
 
+// Serve static files from the React app in production mode
 if (NODE_ENV === 'production') {
-  app.use(express.static('client/build'));
+  console.log('Running in PRODUCTION mode');
+  app.use(express.static(path.join(__dirname, 'client/build')));
 
+  // For any request that doesn't match an API route, send back the React index.html
   app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html')),
+    res.sendFile(path.join(__dirname, 'client/build/index.html')),
   );
 }
 
@@ -64,6 +67,12 @@ try {
   console.log(error);
 }
 
-app.listen(PORT, () => {
-  console.log(`Server is running on PORT ${PORT}`);
-});
+// Export the app for Vercel serverless functions
+module.exports = app;
+
+// Only start the server if we are running locally (not on Vercel)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on PORT ${PORT}`);
+  });
+}
