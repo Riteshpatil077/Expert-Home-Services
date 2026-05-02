@@ -40,8 +40,8 @@ if (NODE_ENV === 'development') {
 }
 
 // Serve static files from the React app in production mode
-// Detect production environment (Vercel or manual setting)
-const isProduction = NODE_ENV === 'production' || process.env.VERCEL === '1';
+// Note: On Vercel, static files are handled by vercel.json rewrites for better performance
+const isProduction = NODE_ENV === 'production' && !process.env.VERCEL;
 
 if (isProduction) {
   console.log('Running in PRODUCTION mode');
