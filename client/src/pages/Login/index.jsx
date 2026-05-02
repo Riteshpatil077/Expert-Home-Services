@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, Input, Form, Divider, notification, Checkbox } from 'antd';
+import { Input, Form, Divider, notification, Checkbox } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   EyeInvisibleOutlined,
@@ -151,25 +151,22 @@ function SignIn(props) {
               Forgot Password?
             </Link>
           </div>
-          <Button
-            htmlType='submit'
-            type='primary'
-            size='large'
-            block
-            loading={state.loader}
-            className='bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded'
+          <button
+            type='submit'
+            disabled={state.loader}
+            className='w-full bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50'
           >
             {state.loader ? 'Logging in...' : 'Login'}
-          </Button>
+          </button>
         </Form>
         <Divider className='mt-8'>Or login with</Divider>
         <div className='flex justify-center space-x-4'>
-          <Button type='default' size='large' icon={<GoogleOutlined />}>
-            Google
-          </Button>
-          <Button type='default' size='large' icon={<FacebookOutlined />}>
-            Facebook
-          </Button>
+          <button type='button' className='flex items-center justify-center border border-gray-300 rounded px-4 py-2 hover:bg-gray-100 text-gray-700'>
+            <GoogleOutlined className='mr-2' /> Google
+          </button>
+          <button type='button' className='flex items-center justify-center border border-gray-300 rounded px-4 py-2 hover:bg-gray-100 text-gray-700'>
+            <FacebookOutlined className='mr-2' /> Facebook
+          </button>
         </div>
         <p className='text-lg mt-8'>
           Don't Have an Account?{' '}
