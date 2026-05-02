@@ -46,7 +46,7 @@ const isProduction = NODE_ENV === 'production' && !process.env.VERCEL;
 if (isProduction) {
   console.log('Running in PRODUCTION mode');
   const buildPath = path.join(process.cwd(), 'client', 'build');
-  
+
   app.use(express.static(buildPath));
 
   // Catch-all route to serve the React app
@@ -61,22 +61,22 @@ if (isProduction) {
   });
 }
 
-//database connection
-try {
-  if (DB_STRING !== '<YOUR_DB_STRING>') {
-    mongoose.connect(DB_STRING);
-    const db = mongoose.connection;
-    console.log(process.env.NODE_ENV);
-    db.on('error', console.error.bind(console, 'connection error:'));
-    db.once('open', () => {
-      console.log('database connect....');
-    });
-  } else {
-    console.log('Please Provide Valid DB STRING');
+// Database connection
+const connectDB = async () => {
+  try {
+    if (DB_STRING && DB_STRING !== '<YOUR_DB_STRING>') {
+      console.log('Connecting to:', DB_STRING.split('@')[1] || 'Unknown Host');
+      await mongoose.connect(DB_STRING);
+      console.log('✅ Database connected successfully');
+    } else {
+      console.log('⚠️ Please provide a valid DB_STRING in .env');
+    }
+  } catch (error) {
+    console.error('❌ Database connection error:', error.message);
   }
-} catch (error) {
-  console.log(error);
-}
+};
+
+connectDB();
 
 // Export the app for Vercel serverless functions
 module.exports = app;
