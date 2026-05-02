@@ -19,11 +19,10 @@ exports.getServices = async (req, res) => {
       newSer = newSer.filter((ser) => ser.addressObj.state === req.body.state);
     }
     if (req.body.city) {
-      newSer = newSer.filter((ser) =>
-        ser.addressObj.newCity.city
-          .toLocaleLowerCase()
-          .includes(req.body.city.toLocaleLowerCase()),
-      );
+      newSer = newSer.filter((ser) => {
+        const city = ser.addressObj?.newCity?.city || ser.addressObj?.city;
+        return city && city.toLocaleLowerCase().includes(req.body.city.toLocaleLowerCase());
+      });
     }
     if (req.body.name) {
       newSer = newSer.filter((ser) =>
@@ -57,11 +56,13 @@ exports.getServicesChart = async (req, res) => {
     const newSer = await NewServices.find();
     const city = await Cities.find();
     newSer.map((service) => {
-      if (countCategories[service.addressObj.newCity.city]) {
-        countCategories[service.addressObj.newCity.city] =
-          countCategories[service.addressObj.newCity.city] + 1;
-      } else {
-        countCategories[service.addressObj.newCity.city] = 1;
+      const cityName = service.addressObj?.newCity?.city || service.addressObj?.city;
+      if (cityName) {
+        if (countCategories[cityName]) {
+          countCategories[cityName] = countCategories[cityName] + 1;
+        } else {
+          countCategories[cityName] = 1;
+        }
       }
     });
     finalCategories = city.map((category) => {
