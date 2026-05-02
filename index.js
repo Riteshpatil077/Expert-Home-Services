@@ -40,14 +40,25 @@ if (NODE_ENV === 'development') {
 }
 
 // Serve static files from the React app in production mode
-if (NODE_ENV === 'production') {
-  console.log('Running in PRODUCTION mode');
-  app.use(express.static(path.join(__dirname, 'client/build')));
+// Detect production environment (Vercel or manual setting)
+const isProduction = NODE_ENV === 'production' || process.env.VERCEL === '1';
 
-  // For any request that doesn't match an API route, send back the React index.html
-  app.get('*', (req, res) =>
-    res.sendFile(path.join(__dirname, 'client/build/index.html')),
-  );
+if (isProduction) {
+  console.log('Running in PRODUCTION mode');
+  const buildPath = path.join(process.cwd(), 'client', 'build');
+  
+  app.use(express.static(buildPath));
+
+  // Catch-all route to serve the React app
+  app.get('*', (req, res) => {
+    const indexPath = path.join(buildPath, 'index.html');
+    res.sendFile(indexPath, (err) => {
+      if (err) {
+        console.error('Error sending index.html:', err);
+        res.status(500).send('Could not load frontend. Check if client/build exists.');
+      }
+    });
+  });
 }
 
 //database connection
